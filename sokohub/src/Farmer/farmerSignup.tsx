@@ -81,4 +81,4 @@ const FarmerSignup: React.FC = () => {
   )
 }
 
-export default FarmerSignup
+export default FarmerSignup;
