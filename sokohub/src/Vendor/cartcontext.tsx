@@ -1,20 +1,22 @@
-
+// src/context/CartContext.tsx
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 
-type CartItem = {
+export type CartItem = {
   id: number
   name: string
   unit_price: number
   quantity: number
   farmer_id: number
+  category: string
 }
 
-type CartContextType = {
+export type CartContextType = {
   cart: CartItem[]
   addToCart: (item: CartItem) => void
   removeFromCart: (id: number) => void
   clearCart: () => void
   total: number
+  isInCart: (id: number) => boolean
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -51,13 +53,17 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const clearCart = () => {
     setCart([])
-    localStorage.removeItem('cart') // Clear cart in localStorage
+    localStorage.removeItem('cart')
   }
 
   const total = cart.reduce((sum, item) => sum + Number(item.unit_price) * item.quantity, 0)
 
+  const isInCart = (id: number): boolean => {
+    return cart.some(item => item.id === id)
+  }
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, total }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, total, isInCart }}>
       {children}
     </CartContext.Provider>
   )
@@ -68,3 +74,4 @@ export const useCart = () => {
   if (!context) throw new Error("useCart must be used within a CartProvider")
   return context
 }
+
